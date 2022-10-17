@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Controller;
-
+use App\Entity\Club;
+use App\Repository\ClubRepository;
+use Doctrine\ORM\EntityRepository ;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,5 +43,40 @@ class ClubController extends AbstractController
     public function reservation()
     {
         return new Response("nouvelle page");
+    }
+
+    #[Route('/listClub',name:'app_listClub')]
+    public function listClub(ClubController $repository)
+    {
+        $clubs=$repository->findAll(); 
+        return $this->render("club/listClub.htm.twig",array("tabClub"=>$clubs)) ; 
+    }
+
+    #[Route('addClub',name:'app_addClub')]
+
+      public function addClub ()
+     {
+
+      $club=new Club(); 
+      $club=setName("club3");  
+      $club=setDesciption("club3"); 
+      $em=$doctrine->getManager(); 
+      $em->persiste(); 
+      $em->flush();
+
+
+    }
+
+    public function updateClub(){}
+    #[Route('/removeclub/{id}',name:'app_removeClub')]
+    public function removeClub(ManagerRegistry $doctrine ,ClubRepository $repository,$id){
+        $club=$repository->findAll($id) ;
+        $em=$doctrine->getManager() ;
+        $em->remove($club);
+        $em->flush(); 
+        return $this->redirectToRoute(route:"app_listClub") ; 
+
+    
+
     }
 }
